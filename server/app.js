@@ -1,11 +1,32 @@
 import express from 'express';
+import cors from "cors";
+import dotenv from "dotenv";
+import studentRoutes from "./routes/studentRoutes.js";
+import connectDB from "./config/db.js";
+
+dotenv.config();
+connectDB();
+
 const app = express()
-const port = 3000
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+app.use(cors());
+app.use(express.json()); // ⭐ MOST IMPORTANT
+app.use(express.urlencoded({ extended: true }));
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+
+app.use("/api/student", studentRoutes);
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Online Exam Backend Running 🚀",
+  });
+});
+
+
+
+const PORT = process.env.PORT || 8000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
