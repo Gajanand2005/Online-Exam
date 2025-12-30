@@ -32,7 +32,7 @@ const AddExam = () => {
             {/* Card 1 */}
             <div className="w-[280px] p-5 border rounded-lg bg-white shadow-sm">
               <div className="mb-3">
-                <label className="font-semibold">Subject :Hindi</label>
+                <label className="font-semibold">Exam Name :Hindi</label>
                 <input
                   type="text"
                   placeholder="Enter subject"
