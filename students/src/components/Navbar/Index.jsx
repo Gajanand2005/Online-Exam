@@ -1,7 +1,7 @@
 import React from 'react'
 import logo from '../../assets/logo.jpeg'
 import { motion } from "motion/react"
-import Login from '../login/Index'
+import Login from '../login/Index.jsx'
 
 
 const Navbar = () => {
