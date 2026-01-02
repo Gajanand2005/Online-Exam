@@ -1,0 +1,187 @@
+import Teacher from "../models/teacherModel.js";
+import Exam from "../models/examModel.js"
+import Result from "../models/resultModel.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+/**
+ * 🧑‍🏫 Teacher Register
+ */
+export const registerTeacher = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // 1️⃣ Check all fields
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    // 2️⃣ Check existing teacher
+    const existingTeacher = await Teacher.findOne({ email });
+    if (existingTeacher) {
+      return res.status(409).json({
+        success: false,
+        message: "Teacher already exists",
+      });
+    }
+
+    // 3️⃣ Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // 4️⃣ Create teacher
+    const teacher = await Teacher.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Teacher registered successfully",
+      teacher: {
+        id: teacher._id,
+        name: teacher.name,
+        email: teacher.email,
+        role: teacher.role,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Registration failed",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * 🔑 Teacher Login
+ */
+export const loginTeacher = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 1️⃣ Check fields
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    // 2️⃣ Find teacher
+    const teacher = await Teacher.findOne({ email });
+    if (!teacher) {
+      return res.status(404).json({
+        success: false,
+        message: "Teacher not found",
+      });
+    }
+
+    // 3️⃣ Compare password
+    const isMatch = await bcrypt.compare(password, teacher.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    // 4️⃣ Generate token
+    const token = jwt.sign(
+      {
+        id: teacher._id,
+        role: teacher.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      teacher: {
+        id: teacher._id,
+        name: teacher.name,
+        email: teacher.email,
+        role: teacher.role,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Login failed",
+      error: error.message,
+    });
+  }
+};
+
+/*📝 Create Question Paper*/
+export const createExam = async (req, res) => {
+  try {
+    const exam = await Exam.create(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Exam created successfully",
+      exam,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Exam creation failed",
+      error: error.message,
+    });
+  }
+};
+
+/*📊 Get Class-wise Results*/
+export const getClassResults = async (req, res) => {
+  try {
+    const { className } = req.params;
+
+    const results = await Result.find({ class: className })
+      .populate("studentId", "name rollNo")
+      .populate("examId", "title");
+
+    res.status(200).json({
+      success: true,
+      count: results.length,
+      results,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Unable to fetch results",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * 📤 Export Results (Basic – JSON for now)
+ * (Excel next step me add karenge)
+ */
+export const exportResults = async (req, res) => {
+  try {
+    const results = await Result.find()
+      .populate("studentId")
+      .populate("examId");
+
+    res.status(200).json({
+      success: true,
+      results,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Export failed",
+      error: error.message,
+    });
+  }
+};

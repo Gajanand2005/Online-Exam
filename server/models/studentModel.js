@@ -14,7 +14,6 @@ const studentSchema = new mongoose.Schema(
     rollNo: {
       type: String,
       required: true,
-      unique: true,
     },
 
     class: {
@@ -25,22 +24,11 @@ const studentSchema = new mongoose.Schema(
     section: {
       type: String,
     },
-role: {
+
+    role: {
       type: String,
       default: "student",
     },
-    attemptedExams: [
-      {
-        examId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Exam",
-        },
-        attemptedAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
   },
   { timestamps: true }
 );

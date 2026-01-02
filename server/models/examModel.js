@@ -11,7 +11,7 @@ const examSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
+subject: { type: String },
     examDate: {
       type: Date,
       required: true,
@@ -26,6 +26,13 @@ const examSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+
+questions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Question",
+      },
+    ],
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

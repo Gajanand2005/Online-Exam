@@ -2,6 +2,8 @@ import express from 'express';
 import cors from "cors";
 import dotenv from "dotenv";
 import studentRoutes from "./routes/studentRoutes.js";
+import teacherRoutes from "./routes/teacherRoutes.js";
+import examRoutes from "./routes/examRoutes.js";
 import connectDB from "./config/db.js";
 
 dotenv.config();
@@ -15,6 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use("/api/student", studentRoutes);
+app.use("/api/teacher", teacherRoutes);
+app.use("/api/exam", examRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({
