@@ -1,17 +1,18 @@
 import express from "express";
-import {
-  studentLogin,
-  getExamQuestions,
-  submitExam,
-} from "../controllers/studentController.js";
+import { protectStudent } from "../middleware/studentAuthMiddleware.js";
+import { studentLogin, getExamQuestions, submitExam, getAvailableExams } from "../controllers/studentController.js";
 
 const router = express.Router();
 
-
 router.post("/login", studentLogin);
 
-router.get("/exam/:examId/questions", getExamQuestions);
+// List active exams for the authenticated student's class
+router.get("/exams", protectStudent, getAvailableExams);
 
-router.post("/submit-exam", submitExam);
+// Get questions for a specific exam (student view) - requires student auth
+router.get("/exam/:examId/questions", protectStudent, getExamQuestions);
+
+// Submit exam - student only
+router.post("/submit-exam", protectStudent, submitExam);
 
 export default router;

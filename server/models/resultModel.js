@@ -1,43 +1,20 @@
 import mongoose from "mongoose";
 
+const answerSubSchema = new mongoose.Schema(
+  {
+    questionIndex: { type: Number, required: true },
+    selectedOption: { type: Number, required: true }, // index-based
+  },
+  { _id: false }
+);
+
 const resultSchema = new mongoose.Schema(
   {
-    studentId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-      required: true,
-    },
-
-    examId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Exam",
-      required: true,
-    },
-
-    answers: [
-      {
-        questionId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Question",
-          required: true,
-        },
-        selectedOption: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
-
-    score: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-
-    submittedAt: {
-      type: Date,
-      default: Date.now,
-    },
+    student: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
+    exam: { type: mongoose.Schema.Types.ObjectId, ref: "Exam", required: true },
+    answers: { type: [answerSubSchema], default: [] },
+    score: { type: Number, required: true, default: 0 },
+    submittedAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
