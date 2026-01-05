@@ -136,7 +136,7 @@ const Login = () => {
           {/* ❌ Link hata diya – yahi sabse important fix */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold mt-2"
           >
             Login
           </button>
